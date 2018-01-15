@@ -1,0 +1,92 @@
+
+.root {
+    -fx-background-image: url("bg3.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-min-height: 505px;
+    -fx-min-width: 688px;
+    -fx-font-family: "Helvetica Neue", sans-serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.label {
+    -fx-text-fill: aliceblue;
+}
+
+.button {
+    -fx-background-color: aliceblue;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: lightsteelblue;
+
+}
+.button:hover {
+    -fx-background-color: lightsteelblue;
+    -fx-cursor: hand;
+    -fx-text-fill: aliceblue;
+}
+
+#myGrid {
+    -fx-max-height: 100%;
+    -fx-max-width: 100%;
+    -fx-height: 100%;
+    -fxwidth: 100%;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+}
+
+#title {
+    -fx-font-size: 60px;
+}
+#title_1 {
+    -fx-font-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-color: transparent;
+}
+.table-view {
+    -fx-font-weight: 300;
+    -fx-background-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.table-view .filler {
+    -fx-background-color: lightsteelblue;
+}
+
+.table-view .column-header {
+    -fx-background-color: lightsteelblue;
+    -fx-border-color: dodgerblue;
+    -fx-border-width: 0.1;
+
+}
+
+.table-view .table-row-cell{
+    -fx-background-color: aliceblue;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.table-view .table-row-cell:odd{
+    -fx-background-color: white;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: lightsteelblue;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.table-view .scroll-bar {
+    -fx-background-color: aliceblue;
+}
+
+.corner {
+    -fx-background-color: aliceblue;
+}

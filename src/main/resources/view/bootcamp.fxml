@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="myGrid" minHeight="505.0" minWidth="688.0" prefHeight="505.0" prefWidth="688.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.BootcampController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="0.0" prefWidth="97.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="640.0" minWidth="10.0" prefWidth="511.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="10.0" prefWidth="97.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="97.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="388.0" minHeight="10.0" prefHeight="353.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="141.0" minHeight="0.0" prefHeight="55.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <MenuBar GridPane.columnSpan="3" GridPane.valignment="TOP">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Button fx:id="backBtn" alignment="CENTER" mnemonicParsing="false" onAction="#onBackBtn" text="Back" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+      <ImageView fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+         <image>
+            <Image url="@formbg.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="75.0" fitWidth="100.0" layoutX="602.0" layoutY="47.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+         <image>
+            <Image url="@formbg.png" />
+         </image>
+      </ImageView>
+      <Label id="title" fx:id="title" stylesheets="@style.css" text="Bootcamps" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+      <TableView fx:id="tableView" onMouseClicked="#onClickTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <columns>
+          <TableColumn id="ID" fx:id="tableID" prefWidth="98.0" text="ID" />
+          <TableColumn id="location" fx:id="tableLocation" prefWidth="171.0" text="Location" />
+            <TableColumn id="start" fx:id="tableStart" minWidth="0.0" prefWidth="104.0" text="Start" />
+            <TableColumn id="end" fx:id="tableEnd" prefWidth="99.0" text="End" />
+        </columns>
+      </TableView>
+   </children>
+</GridPane>

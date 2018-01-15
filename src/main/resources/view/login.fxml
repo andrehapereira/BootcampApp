@@ -46,7 +46,7 @@
       <Label fx:id="emailLbl" text="E-mail" textFill="WHITE" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <TextField fx:id="username" promptText="username" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <PasswordField fx:id="password" promptText="password" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <TextField fx:id="email" disable="true" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <TextField fx:id="email" disable="true" visible="false" promptText="e-mail" GridPane.columnIndex="2" GridPane.rowIndex="3" />
       <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#action" text="Login" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
       <Hyperlink fx:id="hyperlink" onAction="#modeSwitch" text="Register" textFill="#a3e3ee" underline="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
       <Label fx:id="message_field" alignment="CENTER" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />

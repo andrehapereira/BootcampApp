@@ -25,4 +25,13 @@ public final class ServiceRegistry {
     public Service getService(String srvName) {
         return services.get(srvName);
     }
+
+
+    public void removeService(Service service) {
+        services.remove(service.getName(),service);
+    }
+
+    public Map<String, Service> getServices() {
+        return services;
+    }
 }

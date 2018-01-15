@@ -62,9 +62,9 @@ public class LoginController implements Controller{
     @FXML
     void modeSwitch(ActionEvent event) {
         if(!registerMode) {
-            showLogin();
+            showRegister();
         } else {
-            showSwitch();
+            showLogin();
         }
     }
 
@@ -72,6 +72,7 @@ public class LoginController implements Controller{
         if(userService.autenthicate(username.getText(), password.getText())) {
             message_field.setText("Login com Sucesso");
             Navigation.getInstance().loadScreen("bootcamp");
+            message_field.setText("");
         } else {
             if (username.getText().isEmpty() || username.getText().matches("\\s+") ||
                     password.getText().isEmpty() || password.getText().matches("\\s+")) {
@@ -102,10 +103,14 @@ public class LoginController implements Controller{
             return;
         }
         userService.addUser(user);
+        loginMode = true;
+        showLogin();
+        username.setText("");
+        password.setText("");
         message_field.setText("User Registered.");
     }
 
-    public void showLogin() {
+    public void showRegister() {
         email.setVisible(true);
         email.setDisable(false);
         emailLbl.setVisible(true);
@@ -117,7 +122,7 @@ public class LoginController implements Controller{
         loginMode = false;
     }
 
-    public void showSwitch() {
+    public void showLogin() {
         email.setVisible(false);
         email.setDisable(true);
         emailLbl.setVisible(false);

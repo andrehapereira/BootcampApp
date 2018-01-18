@@ -1,3 +1,6 @@
+import dao.jpa.JPABootcampDao;
+import dao.jpa.JPACodecadetDao;
+import dao.jpa.JPAUserDao;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import model.Bootcamp;
@@ -5,6 +8,9 @@ import model.Codecadet;
 import model.User;
 import navigation.Navigation;
 import persistence.ConnectionManager;
+import persistence.JPATransactionManager;
+import persistence.SessionManager;
+import persistence.TransactionManager;
 import services.*;
 
 import javax.persistence.EntityManagerFactory;
@@ -15,32 +21,51 @@ import java.sql.Date;
 public class Main extends Application {
     private ConnectionManager cManager;
     private EntityManagerFactory emf;
+    private SessionManager sm;
+    TransactionManager transManager;
 
     @Override
     public void init() throws Exception {
         cManager = new ConnectionManager();
         emf = new Persistence().createEntityManagerFactory("acDB");
+        sm = new SessionManager();
+        sm.setEmf(emf);
+        transManager = new JPATransactionManager();
+        transManager.setSessionManager(sm);
+
+        //INITIALIZE DAOS
+        JPAUserDao userDao = new JPAUserDao();
+        userDao.setSm(sm);
+        JPABootcampDao bootcampDao = new JPABootcampDao();
+        bootcampDao.setSm(sm);
+        JPACodecadetDao codecadetDao = new JPACodecadetDao();
+        codecadetDao.setSm(sm);
+
+        //INITIALIZE SERVICES
         MockUserService mockUserService = new MockUserService();
-       // MockBootcampService mockBootcampService = new MockBootcampService();
+        MockBootcampService mockBootcampService = new MockBootcampService();
         JDBCUserService jdbcService = new JDBCUserService();
         JDBCBootcampService jdbcBootcampService = new JDBCBootcampService();
-        JPAUserService jpaUserService = new JPAUserService();
-        JPABootcampService jpaBootcampService = new JPABootcampService();
+        JPAUserService jpaUserService = new JPAUserService(userDao);
+        JPABootcampService jpaBootcampService = new JPABootcampService(bootcampDao, codecadetDao);
 
+        //SET CONNECTION MANAGERS TO SERVICES
         jdbcBootcampService.setConnectionManager(cManager);
         jdbcService.setConnectionManager(cManager);
         jpaUserService.setConnectionManager(cManager);
         jpaBootcampService.setConnectionManager(cManager);
 
-        jpaUserService.setEmf(emf);
-        jpaBootcampService.setEmf(emf);
+        //SET TRANSACTION MANAGERS TO SERVICES
+        jpaUserService.setTransactionManager(transManager);
+        jpaBootcampService.setTransactionManager(transManager);
 
+        //ADD SERVICES TO SERVICE REGISTRY
         ServiceRegistry.getInstance().addService(jpaBootcampService);
         ServiceRegistry.getInstance().addService(jpaUserService);
         ServiceRegistry.getInstance().addService(jdbcBootcampService);
         ServiceRegistry.getInstance().addService(jdbcService);
         ServiceRegistry.getInstance().addService(mockUserService);
-       // ServiceRegistry.getInstance().addService(mockBootcampService);
+        ServiceRegistry.getInstance().addService(mockBootcampService);
 
         createForTest(jpaBootcampService,jpaUserService);
 

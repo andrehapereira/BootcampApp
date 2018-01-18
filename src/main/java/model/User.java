@@ -4,12 +4,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="user")
-public class User {
+public class User extends AbstractModel{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+    @Column(unique = true)
     private String username;
     private String password;
     private String email;
@@ -42,10 +39,6 @@ public class User {
 
     //GETTERS
 
-    public Integer getId() {
-        return id;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -59,10 +52,6 @@ public class User {
     }
 
     //SETTERS
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public void setEmail(String email) {
         this.email = email;

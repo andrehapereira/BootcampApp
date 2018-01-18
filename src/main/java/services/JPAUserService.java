@@ -1,19 +1,30 @@
 package services;
 
+import dao.UserDao;
 import model.User;
 import persistence.ConnectionManager;
+import persistence.TransactionManager;
 
 import javax.persistence.*;
 import java.sql.*;
 import java.util.List;
 
 public class JPAUserService implements UserService {
-    private EntityManagerFactory emf;
+    private TransactionManager transactionManager;
+    private UserDao userDao;
     private String name = "jpauserservice";
     private Connection dbConnection;
     private ConnectionManager connectionManager;
 
+    public JPAUserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
+    /**
+     * @param username the user name
+     * @param password the user password
+     * @return true if authenticated
+     */
     @Override
     public boolean autenthicate(String username, String password) {
         if (username.equals("") || username.matches("\\s+") || password.equals("") || password.matches("\\s+")){
@@ -40,7 +51,23 @@ public class JPAUserService implements UserService {
 
     @Override
     public User findByName(String username) {
-        return findUserDB(username);
+        return findUserByUsername(username);
+    }
+
+    private User findUserByUsername(String username) {
+        User user = null;
+        try {
+            checkConnection();
+            transactionManager.beginRead();
+            user = userDao.findByUsername(username);
+        } catch (SQLException ex) {
+            System.out.println("Connection Lost.");
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            transactionManager.close();
+        }
+        return user;
     }
 
     @Override
@@ -50,65 +77,76 @@ public class JPAUserService implements UserService {
 
 
     public void addUserDB(User user) {
-        EntityManager em = emf.createEntityManager();
         try {
             checkConnection();
-            em.getTransaction().begin();
-            em.merge(user);
-            em.getTransaction().commit();
-
+            transactionManager.beginWrite();
+            userDao.createOrUpdate(user);
+            transactionManager.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (RollbackException ex) {
-            em.getTransaction().rollback();
+            transactionManager.rollback();
         } finally {
-            em.close();
+           transactionManager.close();
         }
     }
 
-    public User findUserDB(String username) {
+    public User findUserById(int id) {
         User user = null;
-            EntityManager em = emf.createEntityManager();
         try {
             checkConnection();
-            TypedQuery<User> query = em.createQuery("SELECT user FROM User user WHERE user.username = :name", User.class);
-            query.setParameter("name", username);
-            user = query.getSingleResult();
+            System.out.println("OIIIII");
+            transactionManager.beginRead();
+            System.out.println("OIIII2");
+            user = userDao.findById(id);
         } catch (SQLException ex) {
             System.out.println("Connection Lost.");
         } catch (NoResultException e) {
             return null;
         } finally {
-            if (em != null) {
-                em.close();
-            }
+          transactionManager.close();
         }
         return user;
+    }
+
+    public void removeUser(User user) {
+        try {
+            checkConnection();
+            transactionManager.beginWrite();
+            userDao.remove(user);
+            transactionManager.commit();
+        } catch (SQLException ex) {
+            System.out.println("Connection Lost.");
+        } finally {
+            transactionManager.close();
+        }
     }
 
 
     public int userCountDB() {
         int count = 0;
-        EntityManager em = emf.createEntityManager();
         try {
             checkConnection();
-            TypedQuery<User> query = em.createQuery("SELECT user FROM User user", User.class);
-            count = query.getResultList().size();
+            transactionManager.beginRead();
+            count = userDao.userCount();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+           transactionManager.close();
         }
         return count;
     }
 
     public List<User> userList() {
         List<User> count = null;
-        EntityManager em = emf.createEntityManager();
         try {
             checkConnection();
-            TypedQuery<User> query = em.createQuery("SELECT user FROM User user", User.class);
-            count = query.getResultList();
+            transactionManager.beginRead();
+            count = userDao.listAll();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            transactionManager.close();
         }
         return count;
     }
@@ -132,7 +170,7 @@ public class JPAUserService implements UserService {
         return name;
     }
 
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 }

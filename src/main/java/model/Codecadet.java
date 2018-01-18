@@ -5,14 +5,11 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "codecadet")
-public class Codecadet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Codecadet extends AbstractModel {
 
     private String name;
 
-    @OneToOne
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
     private Gender gender;
     private String address;
@@ -87,10 +84,6 @@ public class Codecadet {
 
     public java.sql.Date getBirthday() {
         return birthday;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public void setName(String name) {

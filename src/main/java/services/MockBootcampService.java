@@ -1,4 +1,4 @@
-/*package services;
+package services;
 
 import model.Bootcamp;
 import model.Codecadet;
@@ -74,4 +74,4 @@ public class MockBootcampService implements BootcampService {
     public String getName() {
         return name;
     }
-}*/
+}

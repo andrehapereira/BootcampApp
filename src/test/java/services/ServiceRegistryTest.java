@@ -1,14 +1,14 @@
 package services;
 
+import dao.jpa.JPABootcampDao;
+import dao.jpa.JPACodecadetDao;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
 
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +20,7 @@ public class ServiceRegistryTest {
         Map<String, Service> customHM = new HashMap<>();
         customHM.putAll(ServiceRegistry.getInstance().getServices());
         for(Service s : customHM.values()) {
-            ServiceRegistry.getInstance().getServices().remove(s.getName(),s);
+            ServiceRegistry.getInstance().removeService(s);
         }
         assertEquals(0, ServiceRegistry.getInstance().getServices().size());
     }
@@ -44,7 +44,7 @@ public class ServiceRegistryTest {
     @Test
     public void servicesShouldBeReturned() {
         UserService userService = new MockUserService();
-        BootcampService bService = new JPABootcampService();
+        BootcampService bService = new JPABootcampService(new JPABootcampDao(), new JPACodecadetDao());
         ServiceRegistry.getInstance().addService(userService);
         ServiceRegistry.getInstance().addService(bService);
 

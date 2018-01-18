@@ -6,12 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-
 @Table(name="bootcamp")
-public class  Bootcamp {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class  Bootcamp extends AbstractModel{
 
     private int bootcampNumber;
     private String location;
@@ -36,10 +32,6 @@ public class  Bootcamp {
         codecadets = new HashMap<>();
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public int getBootcampNumber() {
         return bootcampNumber;
     }
@@ -62,10 +54,6 @@ public class  Bootcamp {
 
     public void setEnd(Date end) {
         this.end = end;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public void setLocation(String location) {

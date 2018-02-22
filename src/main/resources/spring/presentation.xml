@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <beans>
+        <bean id="navigation" class="navigation.Navigation">
+            <property name="controllers">
+                <map>
+                    <entry key="LoginController" value-ref="loginController"/>
+                    <entry key="BootcampController" value-ref="bootcampController"/>
+                    <entry key="bootcampDetailsController" value-ref="bootcampDetailsController"/>
+                </map>
+            </property>
+        </bean>
+        <bean id="loginController" class="controller.LoginController">
+            <property name="userService" ref="userService"/>
+            <property name="navigation" ref="navigation"/>
+        </bean>
+
+        <!-- init-method="fillTable -->
+        <bean id="bootcampController" class="controller.BootcampController">
+            <property name="bootcampService" ref="bootcampService"/>
+            <property name="navigation" ref="navigation"/>
+        </bean>
+
+        <bean id="bootcampDetailsController" class="controller.bootcampDetailsController">
+            <property name="bootcampService" ref="bootcampService"/>
+            <property name="navigation" ref="navigation"/>
+        </bean>
+
+    </beans>
+</beans>

@@ -2,19 +2,14 @@ package services;
 
 import dao.UserDao;
 import model.User;
-import persistence.ConnectionManager;
+import org.springframework.transaction.annotation.Transactional;
 import persistence.TransactionManager;
-
 import javax.persistence.*;
-import java.sql.*;
 import java.util.List;
 
 public class JPAUserService implements UserService {
-    private TransactionManager transactionManager;
     private UserDao userDao;
-    private String name = "jpauserservice";
-    private Connection dbConnection;
-    private ConnectionManager connectionManager;
+    private String name = "userservice";
 
     public JPAUserService(UserDao userDao) {
         this.userDao = userDao;
@@ -27,14 +22,14 @@ public class JPAUserService implements UserService {
      */
     @Override
     public boolean autenthicate(String username, String password) {
-        if (username.equals("") || username.matches("\\s+") || password.equals("") || password.matches("\\s+")){
+        if (username.equals("") || username.matches("\\s+") || password.equals("") || password.matches("\\s+")) {
             return false;
         }
-        System.out.println("FOUND USER: ");
         User user = findByName(username);
         if (user == null) {
             return false;
         }
+        System.out.println("FOUND USER: ");
         return user.getUsername().equals(username) && user.getPassword().equals(password);
     }
 
@@ -54,18 +49,13 @@ public class JPAUserService implements UserService {
         return findUserByUsername(username);
     }
 
-    private User findUserByUsername(String username) {
-        User user = null;
+    @Transactional
+    public User findUserByUsername(String username) {
+        User user;
         try {
-            checkConnection();
-            transactionManager.beginRead();
             user = userDao.findByUsername(username);
-        } catch (SQLException ex) {
-            System.out.println("Connection Lost.");
         } catch (NoResultException e) {
             return null;
-        } finally {
-            transactionManager.close();
         }
         return user;
     }
@@ -75,102 +65,33 @@ public class JPAUserService implements UserService {
         return userCountDB();
     }
 
-
+    @Transactional
     public void addUserDB(User user) {
-        try {
-            checkConnection();
-            transactionManager.beginWrite();
             userDao.createOrUpdate(user);
-            transactionManager.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (RollbackException ex) {
-            transactionManager.rollback();
-        } finally {
-           transactionManager.close();
-        }
     }
-
+    @Transactional
     public User findUserById(int id) {
-        User user = null;
-        try {
-            checkConnection();
-            System.out.println("OIIIII");
-            transactionManager.beginRead();
-            System.out.println("OIIII2");
-            user = userDao.findById(id);
-        } catch (SQLException ex) {
-            System.out.println("Connection Lost.");
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-          transactionManager.close();
-        }
+        User user = userDao.findById(id);
         return user;
     }
 
+    @Transactional
     public void removeUser(User user) {
-        try {
-            checkConnection();
-            transactionManager.beginWrite();
             userDao.remove(user);
-            transactionManager.commit();
-        } catch (SQLException ex) {
-            System.out.println("Connection Lost.");
-        } finally {
-            transactionManager.close();
-        }
     }
 
-
+    @Transactional
     public int userCountDB() {
-        int count = 0;
-        try {
-            checkConnection();
-            transactionManager.beginRead();
-            count = userDao.userCount();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-           transactionManager.close();
-        }
+        int count = userDao.userCount();
         return count;
     }
 
+    @Transactional
     public List<User> userList() {
-        List<User> count = null;
-        try {
-            checkConnection();
-            transactionManager.beginRead();
-            count = userDao.listAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            transactionManager.close();
-        }
-        return count;
-    }
-
-    public void checkConnection() throws SQLException {
-        if (dbConnection == null || dbConnection.isClosed()) {
-            dbConnection = connectionManager.getConnection();
-        }
-
-        if (dbConnection == null) {
-            throw new SQLException("No SQL connection");
-        }
-    }
-
-
-    public void setConnectionManager(ConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
+        return userDao.listAll();
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setTransactionManager(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
     }
 }

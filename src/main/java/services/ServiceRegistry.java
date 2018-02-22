@@ -34,4 +34,8 @@ public final class ServiceRegistry {
     public Map<String, Service> getServices() {
         return services;
     }
+
+    public void setServices(Map<String, Service> services) {
+        this.services = services;
+    }
 }

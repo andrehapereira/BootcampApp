@@ -4,16 +4,17 @@ import dao.BootcampDao;
 import model.Bootcamp;
 import persistence.SessionManager;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 
 public class JPABootcampDao extends JPADao<Bootcamp> implements BootcampDao {
-    private SessionManager sm;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public JPABootcampDao() {
         super(Bootcamp.class);
     }
 
-    public void setSm(SessionManager sm) {
-        this.sm = sm;
-        super.setSm(sm);
-    }
 }

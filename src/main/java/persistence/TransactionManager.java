@@ -5,7 +5,4 @@ public interface TransactionManager {
     void beginWrite();
     void commit();
     void rollback();
-    void close();
-    void setSessionManager(SessionManager sm);
-
 }

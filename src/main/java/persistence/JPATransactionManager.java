@@ -1,7 +1,9 @@
 package persistence;
 
 public class JPATransactionManager implements TransactionManager {
+
     private SessionManager sm;
+
     @Override
     public void beginRead() {
         sm.sessionStart();
@@ -17,6 +19,8 @@ public class JPATransactionManager implements TransactionManager {
         if (sm.getCurrentSession().getTransaction().isActive()) {
             sm.getCurrentSession().getTransaction().commit();
         }
+
+        sm.sessionClose();
     }
 
     @Override
@@ -24,16 +28,11 @@ public class JPATransactionManager implements TransactionManager {
         if (sm.getCurrentSession().getTransaction().isActive()) {
             sm.getCurrentSession().getTransaction().rollback();
         }
+
+        sm.sessionClose();
     }
 
-    @Override
-    public void close() {
-        if(sm.getCurrentSession().getTransaction().isActive()) {
-            sm.sessionClose();
-        }
-    }
-
-    public void setSessionManager(SessionManager sm) {
+    public void setSm(SessionManager sm) {
         this.sm = sm;
     }
 }

@@ -7,13 +7,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import model.User;
 import navigation.Navigation;
-import services.ServiceRegistry;
 import services.UserService;
 
 public class LoginController implements Controller{
-    private UserService userService = (UserService)ServiceRegistry.getInstance().getService("jpauserservice");
+    private UserService userService;
     private boolean loginMode = true;
     private boolean registerMode = false;
+    private Navigation navigation;
 
 
 
@@ -71,7 +71,8 @@ public class LoginController implements Controller{
     public void login() {
         if(userService.autenthicate(username.getText(), password.getText())) {
             message_field.setText("Login com Sucesso");
-            Navigation.getInstance().loadScreen("bootcamp");
+            navigation.loadScreen("bootcamp");
+            System.out.println("LOADED");
             message_field.setText("");
         } else {
             if (username.getText().isEmpty() || username.getText().matches("\\s+") ||
@@ -136,5 +137,9 @@ public class LoginController implements Controller{
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setNavigation(Navigation navigation) {
+        this.navigation = navigation;
     }
 }

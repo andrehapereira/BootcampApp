@@ -1,3 +1,9 @@
+import controller.BootcampController;
+import controller.LoginController;
+import controller.bootcampDetailsController;
+import dao.BootcampDao;
+import dao.CodecadetDao;
+import dao.UserDao;
 import dao.jpa.JPABootcampDao;
 import dao.jpa.JPACodecadetDao;
 import dao.jpa.JPAUserDao;
@@ -7,6 +13,9 @@ import model.Bootcamp;
 import model.Codecadet;
 import model.User;
 import navigation.Navigation;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import persistence.ConnectionManager;
 import persistence.JPATransactionManager;
 import persistence.SessionManager;
@@ -19,69 +28,16 @@ import java.sql.Date;
 
 
 public class Main extends Application {
-    private ConnectionManager cManager;
-    private EntityManagerFactory emf;
-    private SessionManager sm;
-    TransactionManager transManager;
 
-    @Override
-    public void init() throws Exception {
-        cManager = new ConnectionManager();
-        emf = new Persistence().createEntityManagerFactory("acDB");
-        sm = new SessionManager();
-        sm.setEmf(emf);
-        transManager = new JPATransactionManager();
-        transManager.setSessionManager(sm);
 
-        //INITIALIZE DAOS
-        JPAUserDao userDao = new JPAUserDao();
-        userDao.setSm(sm);
-        JPABootcampDao bootcampDao = new JPABootcampDao();
-        bootcampDao.setSm(sm);
-        JPACodecadetDao codecadetDao = new JPACodecadetDao();
-        codecadetDao.setSm(sm);
-
-        //INITIALIZE SERVICES
-        MockUserService mockUserService = new MockUserService();
-        MockBootcampService mockBootcampService = new MockBootcampService();
-        JDBCUserService jdbcService = new JDBCUserService();
-        JDBCBootcampService jdbcBootcampService = new JDBCBootcampService();
-        JPAUserService jpaUserService = new JPAUserService(userDao);
-        JPABootcampService jpaBootcampService = new JPABootcampService(bootcampDao, codecadetDao);
-
-        //SET CONNECTION MANAGERS TO SERVICES
-        jdbcBootcampService.setConnectionManager(cManager);
-        jdbcService.setConnectionManager(cManager);
-        jpaUserService.setConnectionManager(cManager);
-        jpaBootcampService.setConnectionManager(cManager);
-
-        //SET TRANSACTION MANAGERS TO SERVICES
-        jpaUserService.setTransactionManager(transManager);
-        jpaBootcampService.setTransactionManager(transManager);
-
-        //ADD SERVICES TO SERVICE REGISTRY
-        ServiceRegistry.getInstance().addService(jpaBootcampService);
-        ServiceRegistry.getInstance().addService(jpaUserService);
-        ServiceRegistry.getInstance().addService(jdbcBootcampService);
-        ServiceRegistry.getInstance().addService(jdbcService);
-        ServiceRegistry.getInstance().addService(mockUserService);
-        ServiceRegistry.getInstance().addService(mockBootcampService);
-
-        createForTest(jpaBootcampService,jpaUserService);
-
-        System.out.println(jpaBootcampService.listAllBootcamps().size());
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Navigation.getInstance().setStage(primaryStage);
-        Navigation.getInstance().loadScreen("login");
-    }
 
-    @Override
-    public void stop() throws Exception {
-        cManager.getConnection().close();
-        emf.close();
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/spring/spring-config.xml");
+        Navigation navigation = applicationContext.getBean("navigation", Navigation.class);
+        navigation.setStage(primaryStage);
+        navigation.loadScreen("login");
     }
 
     public static void main(String[] args) {
@@ -154,6 +110,13 @@ public class Main extends Application {
             counter++;
         }
 
+
+    }
+        public void Populate() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/spring/spring-config.xml");
+        JPABootcampService bootcampService = applicationContext.getBean("bootcampService", JPABootcampService.class);
+            System.out.println(bootcampService.listAllBootcamps());
+        //createForTest(bootcampService, userService);
     }
 }
 

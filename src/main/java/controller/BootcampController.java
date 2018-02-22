@@ -13,16 +13,15 @@ import javafx.scene.layout.GridPane;
 import model.Bootcamp;
 import navigation.Navigation;
 import services.BootcampService;
-import services.ServiceRegistry;
 
 import java.util.Date;
 
 public class BootcampController implements Controller {
     private BootcampService bootcampService;
+    private Navigation navigation;
 
     public void initialize() {
-        bootcampService = (BootcampService) ServiceRegistry.getInstance().getService("jpabootcampservice");
-       fillTable();
+        fillTable();
     }
 
     @FXML
@@ -48,7 +47,7 @@ public class BootcampController implements Controller {
 
     @FXML
     void onBackBtn(ActionEvent event) {
-        Navigation.getInstance().back();
+        navigation.back();
     }
 
     @FXML
@@ -57,15 +56,19 @@ public class BootcampController implements Controller {
         if(row == null) {
             return;
         } else if (event.getClickCount() >= 2){
-            Navigation.getInstance().loadScreen("bootcamp_details");
-            ((bootcampDetailsController)Navigation.getInstance().getControllers("bootcamp_details")).setBootcamp(row);
+            navigation.loadScreen("bootcamp_details");
+            System.out.println(navigation.getControllers("bootcampDetailsController"));
+            ((bootcampDetailsController)navigation.getControllers("bootcampDetailsController")).setBootcamp(row);
+            System.out.println("clicked");
         }
         tableView.getSelectionModel().clearSelection();
     }
 
+
     public void fillTable() {
         ObservableList<Bootcamp> observableList = FXCollections.observableArrayList();
         observableList.addAll(bootcampService.listAllBootcamps());
+        System.out.println(bootcampService.listAllBootcamps());
         tableView.setEditable(false);
         tableID.setCellValueFactory(new PropertyValueFactory<>("bootcampNumber"));
         tableLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -74,4 +77,11 @@ public class BootcampController implements Controller {
         tableView.setItems(observableList);
     }
 
+    public void setBootcampService(BootcampService bootcampService) {
+        this.bootcampService = bootcampService;
+    }
+
+    public void setNavigation(Navigation navigation) {
+        this.navigation = navigation;
+    }
 }

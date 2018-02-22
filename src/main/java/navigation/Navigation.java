@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import controller.Controller;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,20 +16,8 @@ public final class Navigation {
     private final int MIN_WIDTH = 1024;
     private final int MIN_HEIGHT = 768;
     private LinkedList<Scene> scenes = new LinkedList<Scene>();
-    private Map<String, Controller> controllers = new HashMap<>();
+    private Map<String, Controller> controllers;
     private Stage stage;
-    private static Navigation instance = null;
-    private Scene scene;
-
-    private Navigation() {
-    }
-
-    public static synchronized Navigation getInstance() {
-        if(instance == null) {
-            instance = new Navigation();
-        }
-        return instance;
-    }
 
     public void loadScreen(String view) {
         try {
@@ -36,10 +25,17 @@ public final class Navigation {
             // Instantiate the view and the controller
             FXMLLoader fxmlLoader;
             fxmlLoader = new FXMLLoader(getClass().getResource("/view/" + view + ".fxml"));
+            fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
+                @Override
+                public Object call(Class<?> param) {
+                    return controllers.get(param.getSimpleName());
+                }
+            });
+
             Parent root = fxmlLoader.load();
 
             //Store the controller
-            controllers.put(view, fxmlLoader.<Controller>getController());
+            //controllers.put(view, fxmlLoader.<Controller>getController());
 
             // Create a new scene and add it to the stack
             Scene scene = new Scene(root, MIN_WIDTH, MIN_HEIGHT);
@@ -71,6 +67,10 @@ public final class Navigation {
 
     public Controller getControllers(String key) {
         return controllers.get(key);
+    }
+
+    public void setControllers(Map<String, Controller> controllers) {
+        this.controllers = controllers;
     }
 
     public void setStage(Stage stage) {

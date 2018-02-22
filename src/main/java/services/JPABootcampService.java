@@ -6,6 +6,8 @@ import dao.jpa.JPABootcampDao;
 import dao.jpa.JPACodecadetDao;
 import model.Bootcamp;
 import model.Codecadet;
+import navigation.Navigation;
+import org.springframework.transaction.annotation.Transactional;
 import persistence.ConnectionManager;
 import persistence.TransactionManager;
 
@@ -17,65 +19,32 @@ import java.util.List;
 public class JPABootcampService implements BootcampService {
     private final BootcampDao bootcampDao;
     private final CodecadetDao codecadetDao;
-    private TransactionManager transactionManager;
-    private String name = "jpabootcampservice";
-    private Connection dbConnection;
-    private ConnectionManager connectionManager;
+    private String name = "bootcampservice";
 
-    public JPABootcampService(BootcampDao jpaBootcampDao, CodecadetDao codecadetDao) {
-        this.bootcampDao = jpaBootcampDao;
+    public JPABootcampService(BootcampDao bootcampDao, CodecadetDao codecadetDao) {
+        this.bootcampDao = bootcampDao;
         this.codecadetDao = codecadetDao;
     }
 
+    @Transactional
     @Override
     public void addBootcampToList(Bootcamp bootcamp) {
         if (findBootcampById(bootcamp.getBootcampNumber()) == null) {
-            try {
-                checkConnection();
-                transactionManager.beginWrite();
                 bootcampDao.createOrUpdate(bootcamp);
-                transactionManager.commit();
-            } catch (SQLException e) {
-                System.out.println(e);
-            } catch(RollbackException ex) {
-                transactionManager.rollback();
-            } finally {
-                transactionManager.close();
-            }
         }
     }
 
+    @Transactional
     @Override
     public Bootcamp findBootcampById(int id) {
-        Bootcamp bootcamp = null;
-        try {
-            checkConnection();
-            transactionManager.beginRead();
-            bootcamp = bootcampDao.findById(id);
-        } catch (SQLException e) {
-            System.out.println(e);;
-        } catch (NoResultException ex) {
-            return null;
-        } finally {
-            transactionManager.close();
-        }
+        Bootcamp bootcamp = bootcampDao.findById(id);
         return bootcamp;
     }
 
+    @Transactional
     @Override
     public Codecadet findCodecadet(String username) {
-        Codecadet codecadet = null;
-        try {
-            checkConnection();
-            transactionManager.beginRead();
-            codecadet = codecadetDao.findByUsername(username);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch(NoResultException e) {
-            return null;
-        } finally {
-           transactionManager.close();
-        }
+        Codecadet codecadet = codecadetDao.findByUsername(username);
         return codecadet;
     }
 
@@ -85,49 +54,26 @@ public class JPABootcampService implements BootcampService {
         return new ArrayList<>(foundcmp.getCodecadets().values());
     }
 
+    @Transactional
     @Override
     public List<Bootcamp> listAllBootcamps() {
-        List<Bootcamp> bootcamps = null;
-        try {
-            checkConnection();
-            transactionManager.beginRead();
-            bootcamps = bootcampDao.listAll();
-        } catch (SQLException e) {
-            System.out.println(e);
-        } catch (NoResultException ex) {
-            return null;
-        }finally {
-            transactionManager.close();
-        }
-        System.out.println(bootcamps);
+        List<Bootcamp> bootcamps = bootcampDao.listAll();
         return bootcamps;
     }
 
+    @Transactional
     @Override
     public void addToBootcamp(int id, Codecadet codecadet) {
-        try {
-            checkConnection();
-            transactionManager.beginWrite();
             Bootcamp bcamp = bootcampDao.findById(id);
             codecadet.setBootcamp(bcamp);
             bcamp.addToList(codecadet);
             bootcampDao.createOrUpdate(bcamp);
-            transactionManager.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (RollbackException ex) {
-            transactionManager.rollback();
-        } finally {
-            transactionManager.close();
-            System.out.println("Added.");
-        }
     }
 
+    @Transactional
     @Override
     public void changeBootcamp(String username, int bootcampId) {
-        try {
-            checkConnection();
-            transactionManager.beginWrite();
+
             Codecadet codecadet = codecadetDao.findByUsername(username);
             Bootcamp bootcamp = bootcampDao.findById(bootcampId);
             Bootcamp currentBootcamp = bootcampDao.findById(codecadet.getBootcamp().getId());
@@ -135,37 +81,11 @@ public class JPABootcampService implements BootcampService {
             bootcamp.getCodecadets().put(codecadet.getUser().getUsername(), codecadet);
             codecadet.setBootcamp(bootcamp);
             bootcampDao.createOrUpdate(currentBootcamp);
-            transactionManager.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (RollbackException ex) {
-            transactionManager.rollback();
-        } finally {
-            transactionManager.close();
-        }
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public void checkConnection() throws SQLException {
-        if (dbConnection == null || dbConnection.isClosed()) {
-            dbConnection = connectionManager.getConnection();
-        }
-
-        if (dbConnection == null) {
-            throw new SQLException("No SQL connection.");
-        }
-    }
-
-    public void setTransactionManager(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
-
-    public void setConnectionManager(ConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
     }
 
 }

@@ -20,7 +20,8 @@ import java.util.Date;
 
 public class bootcampDetailsController implements Controller{
     private Bootcamp bootcamp;
-    private BootcampService bootcampService = (BootcampService)ServiceRegistry.getInstance().getService("jpabootcampservice");
+    private BootcampService bootcampService;
+    private Navigation navigation;
 
     @FXML
     private GridPane myGridCadets;
@@ -69,17 +70,19 @@ public class bootcampDetailsController implements Controller{
 
     @FXML
     void onBackBtn(ActionEvent event) {
-        Navigation.getInstance().back();
+        navigation.back();
         tableView.refresh();
     }
 
     public void setBootcamp(Bootcamp bootcamp) {
-        this.bootcamp = bootcamp;
+        this.bootcamp = bootcampService.findBootcampById(bootcamp.getId());
+
+        fillTable();
         idLabel.setText(String.valueOf(bootcamp.getBootcampNumber()));
         locationLabel.setText(bootcamp.getLocation());
         startLbl.setText("" + bootcamp.getStart());
         endLbl.setText("" + bootcamp.getEnd());
-        fillTable();
+
     }
 
 
@@ -94,5 +97,13 @@ public class bootcampDetailsController implements Controller{
         colPhone.setCellValueFactory(new PropertyValueFactory<Codecadet, String>("phone"));
         colBirthday.setCellValueFactory(new PropertyValueFactory<Codecadet, Date>("birthday"));
         tableView.setItems(observableList);
+    }
+
+    public void setBootcampService(BootcampService bootcampService) {
+        this.bootcampService = bootcampService;
+    }
+
+    public void setNavigation(Navigation navigation) {
+        this.navigation = navigation;
     }
 }

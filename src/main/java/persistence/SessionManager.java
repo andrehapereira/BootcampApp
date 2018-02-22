@@ -2,16 +2,17 @@ package persistence;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 public class SessionManager {
+
+    @PersistenceUnit(name="pUnit")
     private EntityManagerFactory emf;
     private EntityManager em;
 
     public void sessionStart() {
         if (em == null) {
-            System.out.println(em);
             em = emf.createEntityManager();
-            System.out.println(em);
         }
     }
 
@@ -25,9 +26,5 @@ public class SessionManager {
     public EntityManager getCurrentSession() {
         sessionStart();
         return em;
-    }
-
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
     }
 }
